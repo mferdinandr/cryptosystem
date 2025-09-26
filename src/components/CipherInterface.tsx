@@ -33,6 +33,7 @@ const KEY_PLACEHOLDERS = {
   [CipherType.Vigenere]: "e.g., SECRET",
   [CipherType.Hill]: "e.g., 9,4,5,7",
   [CipherType.Permutation]: "e.g., 3,1,4,2",
+  [CipherType.OneTimePad]: "Upload file kunci di bawah",
 };
 
 export function CipherInterface() {
@@ -41,6 +42,7 @@ export function CipherInterface() {
   );
   const [inputText, setInputText] = useState("");
   const [key, setKey] = useState("");
+  const [keyFileContent, setKeyFileContent] = useState(""); // <-- State untuk konten file kunci
   const [rawOutput, setRawOutput] = useState("");
   const [outputFormat, setOutputFormat] = useState("grouped");
   const [lastOperation, setLastOperation] = useState<
@@ -49,36 +51,53 @@ export function CipherInterface() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleEncryptText = () => {
-    const encryptFn = ciphers[selectedCipher].encrypt;
-    setRawOutput(encryptFn(inputText, key));
-    setLastOperation("encrypt");
+  const handleKeyFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result as string;
+      setKeyFileContent(text);
+      toast.success(`File kunci "${file.name}" berhasil dimuat.`);
+    };
+    reader.onerror = () => {
+      toast.error(`Gagal membaca file kunci "${file.name}".`);
+    };
+    reader.readAsText(file);
   };
 
-  const handleDecryptText = () => {
-    const decryptFn = ciphers[selectedCipher].decrypt;
-    setRawOutput(decryptFn(inputText, key));
-    setLastOperation("decrypt");
+  const processText = (operation: "encrypt" | "decrypt") => {
+    const isOtp = selectedCipher === CipherType.OneTimePad;
+    const currentKey = isOtp ? keyFileContent : key;
+
+    if (!currentKey) {
+      toast.error("Error", {
+        description: isOtp
+          ? "Silakan unggah file kunci."
+          : "Kunci tidak boleh kosong.",
+      });
+      return;
+    }
+
+    const processFn = ciphers[selectedCipher][operation];
+    setRawOutput(processFn(inputText, currentKey));
+    setLastOperation(operation);
   };
 
   const formattedOutput = useMemo(() => {
-    if (!rawOutput) {
-      return "";
-    }
-
+    if (!rawOutput) return "";
     const cleanText = rawOutput.toUpperCase().replace(/[^A-Z0-9]/g, "");
-
     if (outputFormat === "grouped") {
       return cleanText.match(/.{1,5}/g)?.join(" ") || "";
     }
-
     return cleanText;
   }, [rawOutput, outputFormat]);
 
+  // ... sisa fungsi tidak berubah ...
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) setSelectedFile(e.target.files[0]);
   };
-
   const triggerFileDownload = (blob: Blob, fileName: string) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -89,7 +108,6 @@ export function CipherInterface() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
-
   const handleFileEncrypt = async () => {
     if (!selectedFile || !key) {
       toast.error("Error", {
@@ -100,7 +118,7 @@ export function CipherInterface() {
     setIsProcessing(true);
     try {
       const encryptedBlob = await encryptFile(selectedFile, key);
-      triggerFileDownload(encryptedBlob, `${selectedFile.name}.enc`);
+      triggerFileDownload(encryptedBlob, `${selectedFile.name}`);
       toast.success("Success", {
         description: "File encrypted and download started.",
       });
@@ -110,7 +128,6 @@ export function CipherInterface() {
       setIsProcessing(false);
     }
   };
-
   const handleFileDecrypt = async () => {
     if (!selectedFile || !key) {
       toast.error("Error", {
@@ -161,19 +178,34 @@ export function CipherInterface() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="key-input">Key</Label>
-              <Input
-                id="key-input"
-                placeholder={
-                  KEY_PLACEHOLDERS[
-                    selectedCipher as keyof typeof KEY_PLACEHOLDERS
-                  ]
-                }
-                value={key}
-                onChange={(e) => setKey(e.target.value)}
-              />
-            </div>
+
+            {/* ++ INPUT KUNCI DINAMIS ++ */}
+            {selectedCipher === CipherType.OneTimePad ? (
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="key-file-input">File Kunci (.txt)</Label>
+                <Input
+                  id="key-file-input"
+                  type="file"
+                  accept=".txt"
+                  onChange={handleKeyFileChange}
+                />
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="key-input">Key</Label>
+                <Input
+                  id="key-input"
+                  placeholder={
+                    KEY_PLACEHOLDERS[
+                      selectedCipher as keyof typeof KEY_PLACEHOLDERS
+                    ]
+                  }
+                  value={key}
+                  onChange={(e) => setKey(e.target.value)}
+                />
+              </div>
+            )}
+            {/* -- AKHIR INPUT KUNCI DINAMIS -- */}
           </div>
 
           <Separator />
@@ -198,15 +230,19 @@ export function CipherInterface() {
                   />
                 </div>
                 <div className="flex gap-2 justify-center">
-                  <Button onClick={handleEncryptText}>Encrypt</Button>
-                  <Button onClick={handleDecryptText} variant="outline">
+                  <Button onClick={() => processText("encrypt")}>
+                    Encrypt
+                  </Button>
+                  <Button
+                    onClick={() => processText("decrypt")}
+                    variant="outline"
+                  >
                     Decrypt
                   </Button>
                 </div>
                 <div className="grid gap-2">
                   <div className="flex justify-between items-center mb-2">
                     <Label htmlFor="output-text">Output</Label>
-                    {/* Perubahan Logika #2: Tampilkan jika ada operasi (bukan hanya encrypt) */}
                     {lastOperation !== null && (
                       <RadioGroup
                         defaultValue="grouped"
@@ -238,6 +274,7 @@ export function CipherInterface() {
                 </div>
               </div>
             </TabsContent>
+            {/* ... sisa kode tidak berubah ... */}
             <TabsContent value="file" className="mt-4">
               <div className="grid gap-4">
                 <div className="grid gap-2 text-center">

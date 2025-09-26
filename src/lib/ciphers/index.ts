@@ -4,3 +4,4 @@ export * as affine from "./affine";
 export * as vigenere from "./vigenere";
 export * as hill from "./hill";
 export * as permutation from "./permutation";
+export * as oneTimePad from "./one-time-pad";
