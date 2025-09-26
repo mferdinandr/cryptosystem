@@ -1,4 +1,3 @@
-// src/lib/ciphers/hill.ts
 function modInverse(a: number, m: number): number {
   a = ((a % m) + m) % m;
   for (let x = 1; x < m; x++) {

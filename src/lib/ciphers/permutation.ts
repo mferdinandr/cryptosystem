@@ -1,4 +1,3 @@
-// src/lib/ciphers/permutation.ts
 const process = (text: string, key: string, isEncrypt: boolean): string => {
   const cleanText = text.toUpperCase().replace(/[^A-Z]/g, "");
   const keyMap = key.split(",").map((k) => parseInt(k.trim(), 10) - 1);

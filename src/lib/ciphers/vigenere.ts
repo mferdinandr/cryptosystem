@@ -1,4 +1,3 @@
-// src/lib/ciphers/vigenere.ts
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 const process = (text: string, key: string, isEncrypt: boolean): string => {
@@ -20,7 +19,6 @@ const process = (text: string, key: string, isEncrypt: boolean): string => {
       result += ALPHABET[newIndex];
       keyIndex++;
     }
-    // Karakter non-alfabet akan diabaikan dan dibuang dari hasil
   }
   return result;
 };
