@@ -1,73 +1,70 @@
-# React + TypeScript + Vite
+# Cryptosystem Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sebuah aplikasi React berbasis Vite yang mengimplementasikan sistem kriptografi
 
-Currently, two official plugins are available:
+## 🚀 Quick Start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Prasyarat
 
-## React Compiler
+Pastikan Anda telah menginstall [Bun](https://bun.com/docs/installation) di sistem Anda:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+# Install Bun (jika belum terinstall)
+curl -fsSL https://bun.sh/install | bash
 
-## Expanding the ESLint configuration
+# Atau menggunakan npm
+npm install -g bun
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Atau menggunakan homebrew (macOS)
+brew install bun
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Instalasi dan Menjalankan Project
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. **Clone Repository**
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+   ```bash
+   git clone https://github.com/mferdinandr/cryptosystem.git
+   cd cryptosystem
+   ```
+
+2. **Install Dependencies**
+
+   ```bash
+   bun install
+   ```
+
+3. **Jalankan Development Server**
+
+   ```bash
+   bun run dev
+   ```
+
+4. **Buka Browser**
+
+   Aplikasi akan berjalan di `http://localhost:5173` (atau port lain yang tersedia)
+
+## 🛠️ Teknologi yang Digunakan
+
+- **React** - Library UI JavaScript
+- **Vite** - Build tool dan development server yang cepat
+- **TypeScript** - Superset JavaScript dengan type safety
+- **ESLint** - Linter untuk kualitas kode
+- **Bun** - JavaScript runtime dan package manager yang cepat
+- **Tailwind CSS** - Library styling CSS
+- **ShadeCN** - Library Components
+
+## 📁 Struktur Project
+
+```
+cryptosystem/
+├── src/                 # Source code aplikasi
+├── public/             # Static assets
+├── dist/               # Build output (setelah bun run build)
+├── node_modules/       # Dependencies
+├── package.json        # Project configuration
+├── vite.config.ts      # Vite configuration
+├── tsconfig.json       # TypeScript configuration
+├── eslint.config.js    # ESLint configuration
+└── README.md          # Dokumentasi project
 ```
