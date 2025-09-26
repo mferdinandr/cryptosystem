@@ -1,4 +1,3 @@
-// src/lib/ciphers/affine.ts
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 function modInverse(a: number, m: number): number {
@@ -23,17 +22,14 @@ export function encrypt(text: string, key: string): string {
     return "Invalid key. `a` must be coprime with 26.";
   }
 
-  return text
-    .toUpperCase()
-    .split("")
-    .map((char) => {
-      if (ALPHABET.includes(char)) {
-        const x = ALPHABET.indexOf(char);
-        return ALPHABET[(a * x + b) % 26];
-      }
-      return char;
-    })
-    .join("");
+  let result = "";
+  for (const char of text.toUpperCase()) {
+    if (ALPHABET.includes(char)) {
+      const x = ALPHABET.indexOf(char);
+      result += ALPHABET[(a * x + b) % 26];
+    }
+  }
+  return result;
 }
 
 export function decrypt(cipher: string, key: string): string {
@@ -47,15 +43,12 @@ export function decrypt(cipher: string, key: string): string {
   }
 
   const a_inv = modInverse(a, 26);
-  return cipher
-    .toUpperCase()
-    .split("")
-    .map((char) => {
-      if (ALPHABET.includes(char)) {
-        const y = ALPHABET.indexOf(char);
-        return ALPHABET[(a_inv * (y - b + 26)) % 26];
-      }
-      return char;
-    })
-    .join("");
+  let result = "";
+  for (const char of cipher.toUpperCase()) {
+    if (ALPHABET.includes(char)) {
+      const y = ALPHABET.indexOf(char);
+      result += ALPHABET[(a_inv * (y - b + 26)) % 26];
+    }
+  }
+  return result;
 }
