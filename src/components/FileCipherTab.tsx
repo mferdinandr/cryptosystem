@@ -4,7 +4,10 @@ import { Button } from "./ui/button";
 import { Download, Upload } from "lucide-react";
 import { TabsContent } from "./ui/tabs";
 
+// Props diperbarui
 type FileCipherTabProps = {
+  keyVal: string;
+  setKey: (value: string) => void;
   selectedFile: File | null;
   isProcessing: boolean;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -13,6 +16,8 @@ type FileCipherTabProps = {
 };
 
 export function FileCipherTab({
+  keyVal,
+  setKey,
   selectedFile,
   isProcessing,
   handleFileChange,
@@ -22,6 +27,17 @@ export function FileCipherTab({
   return (
     <TabsContent value="file" className="mt-4">
       <div className="grid gap-4">
+        {/* ++ Input Kunci ditambahkan di sini ++ */}
+        <div className="grid grid-cols-1 gap-2">
+          <Label htmlFor="file-key-input">Key</Label>
+          <Input
+            id="file-key-input"
+            placeholder="Masukkan kunci untuk enkripsi file..."
+            value={keyVal}
+            onChange={(e) => setKey(e.target.value)}
+          />
+        </div>
+
         <div className="grid gap-2 text-center">
           <Label htmlFor="file-upload">Select File</Label>
           <Input

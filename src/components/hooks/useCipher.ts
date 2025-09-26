@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { CipherType } from "../../lib/types";
 import * as ciphers from "../../lib/ciphers";
 import { encryptFile, decryptFile } from "../../lib/fileProcessor";
-import { triggerFileDownload } from "../../lib/utils"; //
+import { triggerFileDownload } from "../../lib/utils";
 
 const KEY_PLACEHOLDERS = {
   [CipherType.Shift]: "e.g., 3",
@@ -31,6 +31,45 @@ export const useCipher = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  const getCurrentKey = () => {
+    return selectedCipher === CipherType.OneTimePad ? keyFileContent : key;
+  };
+
+  const handleEncryptClick = () => {
+    const currentKey = getCurrentKey();
+    if (!currentKey) {
+      toast.error("Error", {
+        description:
+          selectedCipher === CipherType.OneTimePad
+            ? "Silakan unggah file kunci."
+            : "Kunci tidak boleh kosong.",
+      });
+      return;
+    }
+    const encryptFn = ciphers[selectedCipher].encrypt;
+    setRawOutput(encryptFn(inputText, currentKey));
+    setLastOperation("encrypt");
+  };
+
+  const handleDecryptClick = () => {
+    const currentKey = getCurrentKey();
+    if (!currentKey) {
+      toast.error("Error", {
+        description:
+          selectedCipher === CipherType.OneTimePad
+            ? "Silakan unggah file kunci."
+            : "Kunci tidak boleh kosong.",
+      });
+      return;
+    }
+    const textToDecrypt = rawOutput;
+    setInputText(textToDecrypt);
+    const decryptFn = ciphers[selectedCipher].decrypt;
+    const result = decryptFn(textToDecrypt, currentKey);
+    setRawOutput(result);
+    setLastOperation("decrypt");
+  };
+
   const handleKeyFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -45,30 +84,15 @@ export const useCipher = () => {
     reader.readAsText(file);
   };
 
-  const processText = (operation: "encrypt" | "decrypt") => {
-    const isOtp = selectedCipher === CipherType.OneTimePad;
-    const currentKey = isOtp ? keyFileContent : key;
-    if (!currentKey) {
-      toast.error("Error", {
-        description: isOtp
-          ? "Silakan unggah file kunci."
-          : "Kunci tidak boleh kosong.",
-      });
-      return;
-    }
-    const processFn = ciphers[selectedCipher][operation];
-    setRawOutput(processFn(inputText, currentKey));
-    setLastOperation(operation);
-  };
-
   const formattedOutput = useMemo(() => {
     if (!rawOutput) return "";
+    if (lastOperation === "decrypt") return rawOutput;
     const cleanText = rawOutput.toUpperCase().replace(/[^A-Z0-9]/g, "");
     if (outputFormat === "grouped") {
       return cleanText.match(/.{1,5}/g)?.join(" ") || "";
     }
     return cleanText;
-  }, [rawOutput, outputFormat]);
+  }, [rawOutput, outputFormat, lastOperation]);
 
   const handleDownloadTextOutput = () => {
     if (!rawOutput) {
@@ -82,11 +106,9 @@ export const useCipher = () => {
     });
     triggerFileDownload(blob, fileName);
   };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) setSelectedFile(e.target.files[0]);
   };
-
   const handleFileEncrypt = async () => {
     if (!selectedFile || !key) {
       toast.error("Error", {
@@ -97,7 +119,7 @@ export const useCipher = () => {
     setIsProcessing(true);
     try {
       const encryptedBlob = await encryptFile(selectedFile, key);
-      triggerFileDownload(encryptedBlob, `${selectedFile.name}.enc`);
+      triggerFileDownload(encryptedBlob, `${selectedFile.name}`);
       toast.success("Success", {
         description: "File encrypted and download started.",
       });
@@ -107,7 +129,6 @@ export const useCipher = () => {
       setIsProcessing(false);
     }
   };
-
   const handleFileDecrypt = async () => {
     if (!selectedFile || !key) {
       toast.error("Error", {
@@ -140,14 +161,18 @@ export const useCipher = () => {
     setKey,
     keyFileContent,
     rawOutput,
-    outputFormat,
-    setOutputFormat,
+    // ++ BARIS YANG HILANG SEBELUMNYA ADA DI SINI ++
+    formattedOutput, // <-- Ditambahkan
+    outputFormat, // <-- Ditambahkan
+    setOutputFormat, // <-- Ditambahkan
+    // --
     lastOperation,
     selectedFile,
     isProcessing,
     KEY_PLACEHOLDERS,
     handleKeyFileChange,
-    processText,
+    handleEncryptClick,
+    handleDecryptClick,
     handleDownloadTextOutput,
     handleFileChange,
     handleFileEncrypt,

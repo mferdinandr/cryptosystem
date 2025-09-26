@@ -7,7 +7,6 @@ import {
 } from "./ui/card";
 import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 import { Separator } from "./ui/separator";
-
 import { useCipher } from "./hooks/useCipher";
 import { CipherControls } from "./CipherControls";
 import { TextCipherTab } from "./TextCipherTab";
@@ -26,15 +25,13 @@ export function CipherInterface() {
       </CardHeader>
       <CardContent>
         <div className="grid gap-6">
-          <CipherControls
-            activeTab={cipherProps.activeTab}
-            selectedCipher={cipherProps.selectedCipher}
-            setSelectedCipher={cipherProps.setSelectedCipher}
-            keyVal={cipherProps.key}
-            setKey={cipherProps.setKey}
-            handleKeyFileChange={cipherProps.handleKeyFileChange}
-            KEY_PLACEHOLDERS={cipherProps.KEY_PLACEHOLDERS}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <CipherControls
+              activeTab={cipherProps.activeTab}
+              selectedCipher={cipherProps.selectedCipher}
+              setSelectedCipher={cipherProps.setSelectedCipher}
+            />
+          </div>
 
           <Separator />
 
@@ -49,17 +46,27 @@ export function CipherInterface() {
             </TabsList>
 
             <TextCipherTab
+              // Props diperbarui
               inputText={cipherProps.inputText}
               setInputText={cipherProps.setInputText}
-              processText={cipherProps.processText}
+              handleEncryptClick={cipherProps.handleEncryptClick}
+              handleDecryptClick={cipherProps.handleDecryptClick}
               rawOutput={cipherProps.rawOutput}
-              formattedOutput={cipherProps.outputFormat}
+              formattedOutput={cipherProps.formattedOutput}
               lastOperation={cipherProps.lastOperation}
               setOutputFormat={cipherProps.setOutputFormat}
               handleDownloadTextOutput={cipherProps.handleDownloadTextOutput}
+              selectedCipher={cipherProps.selectedCipher}
+              keyVal={cipherProps.key}
+              setKey={cipherProps.setKey}
+              handleKeyFileChange={cipherProps.handleKeyFileChange}
+              KEY_PLACEHOLDERS={cipherProps.KEY_PLACEHOLDERS}
             />
 
             <FileCipherTab
+              // Props diperbarui
+              keyVal={cipherProps.key}
+              setKey={cipherProps.setKey}
               selectedFile={cipherProps.selectedFile}
               isProcessing={cipherProps.isProcessing}
               handleFileChange={cipherProps.handleFileChange}
