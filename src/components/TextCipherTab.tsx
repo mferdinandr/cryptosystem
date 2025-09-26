@@ -7,7 +7,6 @@ import { TabsContent } from "./ui/tabs";
 import { Input } from "./ui/input";
 import { CipherType } from "../lib/types";
 
-// Props diperbarui untuk menerima semua yang berhubungan dengan kunci
 type TextCipherTabProps = {
   inputText: string;
   setInputText: (value: string) => void;
@@ -44,7 +43,6 @@ export function TextCipherTab({
   return (
     <TabsContent value="text" className="mt-4">
       <div className="grid gap-4">
-        {/* ++ Input Kunci dipindahkan ke sini ++ */}
         <div className="grid grid-cols-1">
           {selectedCipher === CipherType.OneTimePad ? (
             <div className="flex flex-col gap-2">

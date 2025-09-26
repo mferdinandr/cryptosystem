@@ -4,7 +4,6 @@ import { Button } from "./ui/button";
 import { Download, Upload } from "lucide-react";
 import { TabsContent } from "./ui/tabs";
 
-// Props diperbarui
 type FileCipherTabProps = {
   keyVal: string;
   setKey: (value: string) => void;
@@ -27,7 +26,6 @@ export function FileCipherTab({
   return (
     <TabsContent value="file" className="mt-4">
       <div className="grid gap-4">
-        {/* ++ Input Kunci ditambahkan di sini ++ */}
         <div className="grid grid-cols-1 gap-2">
           <Label htmlFor="file-key-input">Key</Label>
           <Input

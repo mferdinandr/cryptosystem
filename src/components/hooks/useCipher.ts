@@ -161,11 +161,9 @@ export const useCipher = () => {
     setKey,
     keyFileContent,
     rawOutput,
-    // ++ BARIS YANG HILANG SEBELUMNYA ADA DI SINI ++
-    formattedOutput, // <-- Ditambahkan
-    outputFormat, // <-- Ditambahkan
-    setOutputFormat, // <-- Ditambahkan
-    // --
+    formattedOutput,
+    outputFormat,
+    setOutputFormat,
     lastOperation,
     selectedFile,
     isProcessing,

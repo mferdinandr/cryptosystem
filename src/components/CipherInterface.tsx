@@ -46,7 +46,6 @@ export function CipherInterface() {
             </TabsList>
 
             <TextCipherTab
-              // Props diperbarui
               inputText={cipherProps.inputText}
               setInputText={cipherProps.setInputText}
               handleEncryptClick={cipherProps.handleEncryptClick}
@@ -64,7 +63,6 @@ export function CipherInterface() {
             />
 
             <FileCipherTab
-              // Props diperbarui
               keyVal={cipherProps.key}
               setKey={cipherProps.setKey}
               selectedFile={cipherProps.selectedFile}
